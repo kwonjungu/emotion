@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌈 감정 글쓰기 나라 🌈</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Jua', sans-serif;
+  background: linear-gradient(135deg, #fff3e0, #e8f5e9, #e3f2fd, #fce4ec);
+  background-size: 400% 400%;
+  animation: gradientBG 8s ease infinite;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== 헤더 ===== */
+.header {
+  text-align: center;
+  padding: 30px 20px 10px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #e91e63;
+  text-shadow: 2px 2px 0 #fce4ec;
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.header p {
+  font-size: 1.2rem;
+  color: #7b1fa2;
+  margin-top: 5px;
+}
+
+/* ===== 메인 버튼 영역 ===== */
+.main-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.main-btn {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.5rem;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.main-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.main-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-topic {
+  background: linear-gradient(135deg, #ff6f00, #ffa726);
+  color: white;
+}
+
+.btn-emotion {
+  background: linear-gradient(135deg, #7b1fa2, #ce93d8);
+  color: white;
+}
+
+/* ===== 주제 섹션 ===== */
+.topic-section {
+  text-align: center;
+  padding: 20px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.topic-display {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.topic-display.active {
+  display: flex;
+}
+
+.topic-label {
+  font-size: 1.3rem;
+  color: #e65100;
+}
+
+.topic-text {
+  font-size: 2.8rem;
+  color: #d32f2f;
+  background: white;
+  padding: 25px 50px;
+  border-radius: 30px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  border: 4px dashed #ffab91;
+  opacity: 0;
+  transform: scale(0);
+  transition: none;
+}
+
+.topic-text.show {
+  animation: topicAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes topicAppear {
+  0% { opacity: 0; transform: scale(0) rotate(-10deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(5deg); }
+  70% { transform: scale(0.9) rotate(-3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.topic-tip {
+  font-size: 1.1rem;
+  color: #6a1b9a;
+  background: #f3e5f5;
+  padding: 15px 25px;
+  border-radius: 20px;
+  max-width: 500px;
+  line-height: 1.6;
+  opacity: 0;
+}
+
+.topic-tip.show {
+  animation: fadeUp 0.5s ease forwards;
+  animation-delay: 1s;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.writing-area {
+  width: 90%;
+  max-width: 600px;
+  margin-top: 15px;
+  opacity: 0;
+}
+
+.writing-area.show {
+  animation: fadeUp 0.5s ease forwards;
+  animation-delay: 1.5s;
+}
+
+.writing-area textarea {
+  font-family: 'Jua', sans-serif;
+  width: 100%;
+  min-height: 200px;
+  padding: 20px;
+  font-size: 1.3rem;
+  border: 3px solid #ffcc80;
+  border-radius: 20px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.8;
+  background: #fffde7;
+}
+
+.writing-area textarea:focus {
+  border-color: #ff9800;
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+}
+
+.writing-area textarea::placeholder {
+  color: #bcaaa4;
+}
+
+/* ===== 팡파레 ===== */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.confetti {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  top: -20px;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg) scale(0); opacity: 0; }
+}
+
+/* ===== 감정 카드 오버레이 ===== */
+.emotion-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.97);
+  z-index: 2000;
+  overflow-y: auto;
+  animation: overlayIn 0.4s ease;
+}
+
+.emotion-overlay.active {
+  display: block;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.emotion-header {
+  text-align: center;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.95);
+  z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+.emotion-header h2 {
+  font-size: 2rem;
+  color: #7b1fa2;
+}
+
+.close-btn {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.2rem;
+  padding: 10px 30px;
+  border: none;
+  background: linear-gradient(135deg, #ef5350, #e91e63);
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: transform 0.2s;
+}
+
+.close-btn:hover {
+  transform: scale(1.05);
+}
+
+.emotion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  padding: 15px 20px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.emotion-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 3px solid transparent;
+  user-select: none;
+}
+
+.emotion-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.emotion-card.selected {
+  border-color: #e91e63;
+  background: #fce4ec;
+}
+
+.emotion-card .emoji {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 8px;
+  animation: cardPop 0.5s ease backwards;
+}
+
+.emotion-card .name {
+  font-size: 1.2rem;
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.emotion-card .desc {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.4;
+}
+
+@keyframes cardPop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+/* ===== 두둥 텍스트 ===== */
+.dudung {
+  font-size: 4rem;
+  color: #ff6f00;
+  text-shadow: 3px 3px 0 #ffe0b2;
+  opacity: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 3000;
+  pointer-events: none;
+}
+
+.dudung.show {
+  animation: dudungAnim 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes dudungAnim {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-20deg); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.5) rotate(10deg); }
+  50% { transform: translate(-50%, -50%) scale(1.2) rotate(-5deg); }
+  70% { transform: translate(-50%, -50%) scale(1.3) rotate(3deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2) rotate(0deg); }
+}
+
+/* ===== 별 반짝이 ===== */
+.sparkle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 1.5rem;
+  animation: sparkleFade 0.8s ease forwards;
+}
+
+@keyframes sparkleFade {
+  0% { opacity: 1; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.8rem; }
+  .main-btn { font-size: 1.2rem; padding: 15px 25px; }
+  .topic-text { font-size: 2rem; padding: 20px 30px; }
+  .emotion-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+  .emotion-card .emoji { font-size: 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <h1>🌈 감정 글쓰기 나라 🌈</h1>
+  <p>오늘은 어떤 이야기를 써 볼까~?</p>
+</div>
+
+<!-- 메인 버튼 -->
+<div class="main-buttons">
+  <button class="main-btn btn-topic" onclick="generateTopic()">✏️ 주제 만들기</button>
+  <button class="main-btn btn-emotion" onclick="openEmotions()">💜 감정 카드 보기</button>
+</div>
+
+<!-- 주제 섹션 -->
+<div class="topic-section">
+  <div class="topic-display" id="topicDisplay">
+    <div class="topic-label" id="topicLabel"></div>
+    <div class="topic-text" id="topicText"></div>
+    <div class="topic-tip" id="topicTip"></div>
+    <div class="writing-area" id="writingArea">
+      <textarea id="writingBox" placeholder="여기에 글을 써 보자~! 🖊️"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- 두둥 텍스트 -->
+<div class="dudung" id="dudung">두둥!</div>
+
+<!-- 팡파레 컨테이너 -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- 감정 카드 오버레이 -->
+<div class="emotion-overlay" id="emotionOverlay">
+  <div class="emotion-header">
+    <h2>💜 나의 감정 카드 💜</h2>
+    <p style="color:#888; margin:5px 0;">지금 내 마음은 어떤 감정일까~? 골라 보자!</p>
+    <button class="close-btn" onclick="closeEmotions()">닫기 ✕</button>
+  </div>
+  <div class="emotion-grid" id="emotionGrid"></div>
+</div>
+
+<!-- 효과음용 (Web Audio API) -->
+<script>
+// ===== 효과음 =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playFanfare() {
+  const ctx = getAudioCtx();
+  const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.15);
+    osc.stop(ctx.currentTime + i * 0.15 + 0.5);
+  });
+}
+
+function playPop() {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(800, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.15);
+  gain.gain.setValueAtTime(0.2, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.15);
+}
+
+// ===== 팡파레 효과 =====
+function launchConfetti() {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#e91e63','#ff5722','#ff9800','#ffeb3b','#4caf50','#2196f3','#9c27b0','#00bcd4'];
+  const shapes = ['●','★','♥','♦','▲','◆','✦','🎉'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.fontSize = (Math.random() * 16 + 10) + 'px';
+    el.style.color = colors[Math.floor(Math.random() * colors.length)];
+    el.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+    el.style.animationDelay = (Math.random() * 0.5) + 's';
+    container.appendChild(el);
+  }
+  setTimeout(() => { container.innerHTML = ''; }, 4000);
+}
+
+// ===== 주제 데이터 =====
+const topics = [
+  { text: "우리 가족 소개하기", tip: "우리 가족은 누가 있는지 소개해 보자~! 엄마, 아빠, 형제자매, 반려동물도 좋아!" },
+  { text: "내가 좋아하는 음식", tip: "가장 맛있는 음식은 뭐야~? 어떤 맛이 나는지 써 보자!" },
+  { text: "오늘 있었던 일", tip: "오늘 하루 중에서 가장 기억에 남는 일을 떠올려 보자~!" },
+  { text: "내 친구를 소개해요", tip: "가장 친한 친구는 누구야~? 그 친구는 어떤 점이 좋아?" },
+  { text: "내가 키우고 싶은 동물", tip: "어떤 동물을 키우고 싶어~? 왜 그 동물이 좋은지 써 보자!" },
+  { text: "가장 재미있었던 놀이", tip: "어떤 놀이가 가장 재미있었어~? 누구랑 했는지도 써 보자!" },
+  { text: "내가 만약 마법사라면", tip: "마법사가 되면 어떤 마법을 쓰고 싶어~? 상상해서 써 보자!" },
+  { text: "비 오는 날의 이야기", tip: "비 오는 날에는 뭘 하고 싶어~? 비 소리는 어떻게 들려?" },
+  { text: "내가 가장 좋아하는 계절", tip: "봄, 여름, 가을, 겨울 중에 어떤 계절이 좋아~? 왜 좋은지 써 보자!" },
+  { text: "학교에서 있었던 일", tip: "학교에서 오늘 무슨 일이 있었어~? 기억나는 것을 써 보자!" },
+  { text: "내 보물 소개하기", tip: "나한테 가장 소중한 물건은 뭐야~? 왜 보물인지 알려 줘!" },
+  { text: "엄마(아빠)에게 편지쓰기", tip: "엄마나 아빠에게 하고 싶은 말을 편지로 써 보자~!" },
+  { text: "내가 가 본 곳 중 최고!", tip: "가장 좋았던 여행지나 장소는 어디야~? 거기서 뭘 했는지 써 보자!" },
+  { text: "내가 커서 되고 싶은 것", tip: "나중에 크면 뭐가 되고 싶어~? 왜 그게 되고 싶은지 써 보자!" },
+  { text: "우리 집 소개하기", tip: "우리 집은 어디에 있어~? 가장 좋아하는 장소는 어디야?" },
+  { text: "내가 좋아하는 색깔", tip: "가장 좋아하는 색깔은 뭐야~? 그 색깔을 보면 뭐가 생각나?" },
+  { text: "동물원에 갔어요!", tip: "동물원에서 어떤 동물을 봤어~? 가장 신기한 동물은 뭐였어?" },
+  { text: "나만의 비밀 기지", tip: "나만의 비밀 기지를 만든다면 어디에 만들고 싶어~? 상상해 보자!" },
+  { text: "내가 요리사라면", tip: "요리사가 되면 어떤 음식을 만들고 싶어~? 누구한테 주고 싶어?" },
+  { text: "눈 오는 날의 이야기", tip: "눈이 오면 뭘 하고 싶어~? 눈은 어떻게 생겼어?" },
+  { text: "가장 웃겼던 이야기", tip: "정말 많이 웃었던 적이 있어~? 그때 무슨 일이 있었는지 써 보자!" },
+  { text: "내가 좋아하는 만화", tip: "가장 좋아하는 만화나 영화는 뭐야~? 어떤 내용인지 써 보자!" },
+  { text: "생일날의 이야기", tip: "생일에 뭘 했는지 떠올려 보자~! 어떤 선물을 받았어?" },
+  { text: "나는 이런 사람이야", tip: "내가 잘하는 것, 좋아하는 것을 써서 나를 소개해 보자~!" },
+  { text: "고마운 사람에게", tip: "고마운 사람은 누구야~? 왜 고마운지 마음을 담아 써 보자!" }
+];
+
+// ===== 감정 데이터 (32개) =====
+const emotions = [
+  { emoji: "😊", name: "기쁨", desc: "마음이 환하고 웃음이 나와~", color: "#fff9c4" },
+  { emoji: "😢", name: "슬픔", desc: "눈물이 날 것 같은 마음이야", color: "#bbdefb" },
+  { emoji: "😡", name: "화남", desc: "속이 부글부글 끓는 느낌이야", color: "#ffcdd2" },
+  { emoji: "😨", name: "무서움", desc: "오들오들 떨리고 겁이 나", color: "#d1c4e9" },
+  { emoji: "🥰", name: "사랑", desc: "마음이 따뜻하고 포근해~", color: "#f8bbd0" },
+  { emoji: "😮", name: "놀람", desc: "깜짝! 눈이 동그래졌어!", color: "#ffe0b2" },
+  { emoji: "😌", name: "편안함", desc: "마음이 평화롭고 좋아~", color: "#c8e6c9" },
+  { emoji: "🤗", name: "고마움", desc: "감사한 마음이 가득해~", color: "#fff9c4" },
+  { emoji: "😔", name: "외로움", desc: "혼자인 것 같아 쓸쓸해", color: "#cfd8dc" },
+  { emoji: "🤩", name: "신남", desc: "두근두근 가슴이 뛰어!", color: "#ffecb3" },
+  { emoji: "😤", name: "짜증남", desc: "으으~ 기분이 나빠!", color: "#ffccbc" },
+  { emoji: "😳", name: "부끄러움", desc: "얼굴이 빨개지는 느낌이야", color: "#f8bbd0" },
+  { emoji: "🥺", name: "서운함", desc: "마음이 좀 아프고 속상해", color: "#e1bee7" },
+  { emoji: "😤", name: "억울함", desc: "내 잘못이 아닌데 속상해!", color: "#ffcdd2" },
+  { emoji: "🤔", name: "궁금함", desc: "이게 뭘까? 알고 싶어!", color: "#b3e5fc" },
+  { emoji: "😴", name: "지루함", desc: "하품이 나오고 졸려~", color: "#d7ccc8" },
+  { emoji: "💪", name: "자신감", desc: "나는 할 수 있어! 힘이 나!", color: "#dcedc8" },
+  { emoji: "😟", name: "걱정됨", desc: "어떡하지... 마음이 불안해", color: "#b0bec5" },
+  { emoji: "🥳", name: "즐거움", desc: "야호~! 정말 재미있어!", color: "#fff59d" },
+  { emoji: "😣", name: "힘듦", desc: "너무 어렵고 지쳐~", color: "#d7ccc8" },
+  { emoji: "🤭", name: "재미있음", desc: "푸하하~ 웃기고 즐거워!", color: "#f0f4c3" },
+  { emoji: "😠", name: "속상함", desc: "기분이 안 좋고 마음이 아파", color: "#ffcdd2" },
+  { emoji: "🫣", name: "긴장됨", desc: "두근두근... 떨려!", color: "#e1bee7" },
+  { emoji: "😇", name: "뿌듯함", desc: "잘했다! 기분이 좋아~", color: "#c8e6c9" },
+  { emoji: "🤯", name: "당황함", desc: "어? 어? 뭐지?! 헷갈려!", color: "#ffe0b2" },
+  { emoji: "😏", name: "자랑스러움", desc: "나 정말 잘했지~? 으쓱!", color: "#fff9c4" },
+  { emoji: "🥱", name: "심심함", desc: "할 게 없어서 시무룩~", color: "#e0e0e0" },
+  { emoji: "😖", name: "후회됨", desc: "그때 그러지 말걸... 아쉬워", color: "#d1c4e9" },
+  { emoji: "🤝", name: "미안함", desc: "잘못한 것 같아서 마음이 무거워", color: "#b2dfdb" },
+  { emoji: "🫶", name: "행복함", desc: "세상에서 제일 좋은 기분이야!", color: "#f8bbd0" },
+  { emoji: "😶", name: "답답함", desc: "말하고 싶은데 잘 안 돼!", color: "#cfd8dc" },
+  { emoji: "✨", name: "설렘", desc: "곧 좋은 일이 일어날 것 같아~!", color: "#fff9c4" }
+];
+
+// ===== 주제 만들기 =====
+let isAnimating = false;
+
+function generateTopic() {
+  if (isAnimating) return;
+  isAnimating = true;
+
+  const display = document.getElementById('topicDisplay');
+  const textEl = document.getElementById('topicText');
+  const labelEl = document.getElementById('topicLabel');
+  const tipEl = document.getElementById('topicTip');
+  const writingArea = document.getElementById('writingArea');
+  const dudung = document.getElementById('dudung');
+
+  // 초기화
+  textEl.classList.remove('show');
+  tipEl.classList.remove('show');
+  writingArea.classList.remove('show');
+  display.classList.remove('active');
+
+  // 두둥! 등장
+  dudung.classList.remove('show');
+  void dudung.offsetWidth;
+  dudung.classList.add('show');
+  playFanfare();
+  launchConfetti();
+
+  // 주제 선택
+  const topic = topics[Math.floor(Math.random() * topics.length)];
+
+  setTimeout(() => {
+    display.classList.add('active');
+    labelEl.textContent = "오늘의 주제는~?";
+    textEl.textContent = topic.text;
+    tipEl.textContent = "💡 " + topic.tip;
+
+    void textEl.offsetWidth;
+    textEl.classList.add('show');
+    tipEl.classList.add('show');
+    writingArea.classList.add('show');
+
+    isAnimating = false;
+  }, 800);
+}
+
+// ===== 감정 카드 =====
+function openEmotions() {
+  const overlay = document.getElementById('emotionOverlay');
+  const grid = document.getElementById('emotionGrid');
+  grid.innerHTML = '';
+
+  emotions.forEach((emo, i) => {
+    const card = document.createElement('div');
+    card.className = 'emotion-card';
+    card.style.backgroundColor = emo.color;
+    card.innerHTML = `
+      <span class="emoji" style="animation-delay:${i * 0.05}s">${emo.emoji}</span>
+      <span class="name">${emo.name}</span>
+      <span class="desc">${emo.desc}</span>
+    `;
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+      playPop();
+      // 반짝이 효과
+      for (let j = 0; j < 5; j++) {
+        createSparkle(
+          card.getBoundingClientRect().left + card.offsetWidth / 2 + (Math.random() - 0.5) * 60,
+          card.getBoundingClientRect().top + card.offsetHeight / 2 + (Math.random() - 0.5) * 60
+        );
+      }
+    });
+    grid.appendChild(card);
+  });
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEmotions() {
+  document.getElementById('emotionOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function createSparkle(x, y) {
+  const sparkle = document.createElement('div');
+  sparkle.className = 'sparkle';
+  sparkle.textContent = ['✨','⭐','💫','🌟'][Math.floor(Math.random() * 4)];
+  sparkle.style.left = x + 'px';
+  sparkle.style.top = y + 'px';
+  document.body.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 800);
+}
+
+// ===== 커서 반짝이 효과 =====
+document.addEventListener('mousemove', (e) => {
+  if (Math.random() > 0.95) {
+    createSparkle(e.clientX, e.clientY);
+  }
+});
+</script>
+
+</body>
+</html>
