@@ -259,7 +259,7 @@ body {
 }
 
 .emotion-header h2 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #7b1fa2;
 }
 
@@ -282,17 +282,17 @@ body {
 
 .emotion-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-  padding: 15px 20px 40px;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px 25px 40px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .emotion-card {
   background: white;
   border-radius: 20px;
-  padding: 20px 10px;
+  padding: 25px 15px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -312,21 +312,22 @@ body {
 }
 
 .emotion-card .emoji {
-  font-size: 3rem;
+  font-size: 4.5rem;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   animation: cardPop 0.5s ease backwards;
 }
 
 .emotion-card .name {
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   color: #333;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  font-weight: bold;
 }
 
 .emotion-card .desc {
-  font-size: 0.85rem;
+  font-size: 1.1rem;
   color: #888;
   line-height: 1.4;
 }
@@ -382,8 +383,10 @@ body {
   .header h1 { font-size: 1.8rem; }
   .main-btn { font-size: 1.2rem; padding: 15px 25px; }
   .topic-text { font-size: 2rem; padding: 20px 30px; }
-  .emotion-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-  .emotion-card .emoji { font-size: 2.5rem; }
+  .emotion-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .emotion-card .emoji { font-size: 3.5rem; }
+  .emotion-card .name { font-size: 1.4rem; }
+  .emotion-card .desc { font-size: 0.95rem; }
 }
 </style>
 </head>
