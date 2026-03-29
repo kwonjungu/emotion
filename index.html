@@ -250,12 +250,43 @@ body {
 
 .emotion-header {
   text-align: center;
-  padding: 20px;
   position: sticky;
   top: 0;
   background: rgba(255,255,255,0.95);
   z-index: 10;
   backdrop-filter: blur(10px);
+}
+
+.emotion-header-content {
+  padding: 20px 20px 10px;
+  overflow: hidden;
+  max-height: 200px;
+  transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.emotion-header-content.hidden {
+  max-height: 0;
+  padding: 0 20px;
+  opacity: 0;
+}
+
+.toggle-header-btn {
+  font-family: 'Jua', sans-serif;
+  font-size: 1rem;
+  padding: 8px 24px;
+  border: none;
+  background: linear-gradient(135deg, #7b1fa2, #ce93d8);
+  color: white;
+  border-radius: 0 0 20px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 5px;
+}
+
+.toggle-header-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(123,31,162,0.3);
 }
 
 .emotion-header h2 {
@@ -424,10 +455,13 @@ body {
 
 <!-- 감정 카드 오버레이 -->
 <div class="emotion-overlay" id="emotionOverlay">
-  <div class="emotion-header">
-    <h2>💜 나의 감정 카드 💜</h2>
-    <p style="color:#888; margin:5px 0;">지금 내 마음은 어떤 감정일까~? 골라 보자!</p>
-    <button class="close-btn" onclick="closeEmotions()">닫기 ✕</button>
+  <div class="emotion-header" id="emotionHeader">
+    <div class="emotion-header-content" id="emotionHeaderContent">
+      <h2>💜 나의 감정 카드 💜</h2>
+      <p style="color:#888; margin:5px 0;">지금 내 마음은 어떤 감정일까~? 골라 보자!</p>
+      <button class="close-btn" onclick="closeEmotions()">닫기 ✕</button>
+    </div>
+    <button class="toggle-header-btn" id="toggleHeaderBtn" onclick="toggleEmotionHeader()">▲ 위 숨기기</button>
   </div>
   <div class="emotion-grid" id="emotionGrid"></div>
 </div>
@@ -640,6 +674,20 @@ function openEmotions() {
 function closeEmotions() {
   document.getElementById('emotionOverlay').classList.remove('active');
   document.body.style.overflow = '';
+  // 닫을 때 헤더 다시 보이게 초기화
+  document.getElementById('emotionHeaderContent').classList.remove('hidden');
+  document.getElementById('toggleHeaderBtn').textContent = '▲ 위 숨기기';
+}
+
+function toggleEmotionHeader() {
+  const content = document.getElementById('emotionHeaderContent');
+  const btn = document.getElementById('toggleHeaderBtn');
+  content.classList.toggle('hidden');
+  if (content.classList.contains('hidden')) {
+    btn.textContent = '▼ 위 보이기';
+  } else {
+    btn.textContent = '▲ 위 숨기기';
+  }
 }
 
 function createSparkle(x, y) {
