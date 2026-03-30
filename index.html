@@ -368,6 +368,171 @@ body {
   to { transform: scale(1); }
 }
 
+/* ===== 카드 상세 보기 (플립) ===== */
+.card-detail-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 3000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.card-detail-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.card-detail-wrapper {
+  perspective: 1200px;
+  width: 340px;
+  height: 480px;
+}
+
+.card-detail {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+  cursor: pointer;
+}
+
+.card-detail.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.card-front {
+  text-align: center;
+}
+
+.card-front .detail-emoji {
+  font-size: 7rem;
+  margin-bottom: 15px;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0) rotate(-15deg); }
+  to { transform: scale(1) rotate(0deg); }
+}
+
+.card-front .detail-name {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.card-front .detail-desc {
+  font-size: 1.4rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+.card-front .flip-hint {
+  font-size: 1rem;
+  color: #aaa;
+  margin-top: 20px;
+  animation: pulse 1.5s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  text-align: center;
+  gap: 15px;
+}
+
+.card-back .back-art {
+  font-size: 5rem;
+  line-height: 1.2;
+  letter-spacing: 5px;
+}
+
+.card-back .back-label {
+  font-size: 1.2rem;
+  color: #999;
+  margin-top: 5px;
+}
+
+.card-back .back-diary {
+  font-size: 1.5rem;
+  color: #444;
+  line-height: 2;
+  background: rgba(255,255,255,0.6);
+  padding: 18px 22px;
+  border-radius: 18px;
+  border: 2px dashed rgba(0,0,0,0.15);
+  max-width: 290px;
+}
+
+.card-back .back-emotion-tag {
+  font-size: 1.1rem;
+  padding: 6px 18px;
+  border-radius: 20px;
+  color: white;
+  background: rgba(0,0,0,0.2);
+}
+
+.card-detail-close {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+  font-family: 'Jua', sans-serif;
+  font-size: 1.3rem;
+  padding: 10px 25px;
+  border: none;
+  background: white;
+  color: #e91e63;
+  border-radius: 25px;
+  cursor: pointer;
+  z-index: 3001;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.card-detail-close:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+  .card-detail-wrapper {
+    width: 300px;
+    height: 430px;
+  }
+  .card-front .detail-emoji { font-size: 5rem; }
+  .card-front .detail-name { font-size: 2.4rem; }
+  .card-front .detail-desc { font-size: 1.2rem; }
+  .card-back .back-art { font-size: 3.5rem; }
+  .card-back .back-diary { font-size: 1.3rem; padding: 14px 18px; }
+}
+
 /* ===== 두둥 텍스트 ===== */
 .dudung {
   font-size: 4rem;
@@ -464,6 +629,27 @@ body {
     <button class="toggle-header-btn" id="toggleHeaderBtn" onclick="toggleEmotionHeader()">▲ 위 숨기기</button>
   </div>
   <div class="emotion-grid" id="emotionGrid"></div>
+</div>
+
+<!-- 카드 상세 보기 오버레이 -->
+<div class="card-detail-overlay" id="cardDetailOverlay" onclick="closeCardDetail(event)">
+  <button class="card-detail-close" onclick="closeCardDetail(event, true)">✕ 돌아가기</button>
+  <div class="card-detail-wrapper">
+    <div class="card-detail" id="cardDetail" onclick="flipCard(event)">
+      <div class="card-front" id="cardFront">
+        <span class="detail-emoji"></span>
+        <span class="detail-name"></span>
+        <span class="detail-desc"></span>
+        <span class="flip-hint">👆 카드를 눌러서 뒤집어 보자~!</span>
+      </div>
+      <div class="card-back" id="cardBack">
+        <div class="back-art"></div>
+        <div class="back-label">📖 이런 일기를 써 볼 수 있어~!</div>
+        <div class="back-diary"></div>
+        <div class="back-emotion-tag"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- 효과음용 (Web Audio API) -->
@@ -645,38 +831,70 @@ const topics = [
 
 // ===== 감정 데이터 (32개) =====
 const emotions = [
-  { emoji: "😊", name: "기쁨", desc: "마음이 환하고 웃음이 나와~", color: "#fff9c4" },
-  { emoji: "😢", name: "슬픔", desc: "눈물이 날 것 같은 마음이야", color: "#bbdefb" },
-  { emoji: "😡", name: "화남", desc: "속이 부글부글 끓는 느낌이야", color: "#ffcdd2" },
-  { emoji: "😨", name: "무서움", desc: "오들오들 떨리고 겁이 나", color: "#d1c4e9" },
-  { emoji: "🥰", name: "사랑", desc: "마음이 따뜻하고 포근해~", color: "#f8bbd0" },
-  { emoji: "😮", name: "놀람", desc: "깜짝! 눈이 동그래졌어!", color: "#ffe0b2" },
-  { emoji: "😌", name: "편안함", desc: "마음이 평화롭고 좋아~", color: "#c8e6c9" },
-  { emoji: "🤗", name: "고마움", desc: "감사한 마음이 가득해~", color: "#fff9c4" },
-  { emoji: "😔", name: "외로움", desc: "혼자인 것 같아 쓸쓸해", color: "#cfd8dc" },
-  { emoji: "🤩", name: "신남", desc: "두근두근 가슴이 뛰어!", color: "#ffecb3" },
-  { emoji: "😤", name: "짜증남", desc: "으으~ 기분이 나빠!", color: "#ffccbc" },
-  { emoji: "😳", name: "부끄러움", desc: "얼굴이 빨개지는 느낌이야", color: "#f8bbd0" },
-  { emoji: "🥺", name: "서운함", desc: "마음이 좀 아프고 속상해", color: "#e1bee7" },
-  { emoji: "😤", name: "억울함", desc: "내 잘못이 아닌데 속상해!", color: "#ffcdd2" },
-  { emoji: "🤔", name: "궁금함", desc: "이게 뭘까? 알고 싶어!", color: "#b3e5fc" },
-  { emoji: "😴", name: "지루함", desc: "하품이 나오고 졸려~", color: "#d7ccc8" },
-  { emoji: "💪", name: "자신감", desc: "나는 할 수 있어! 힘이 나!", color: "#dcedc8" },
-  { emoji: "😟", name: "걱정됨", desc: "어떡하지... 마음이 불안해", color: "#b0bec5" },
-  { emoji: "🥳", name: "즐거움", desc: "야호~! 정말 재미있어!", color: "#fff59d" },
-  { emoji: "😣", name: "힘듦", desc: "너무 어렵고 지쳐~", color: "#d7ccc8" },
-  { emoji: "🤭", name: "재미있음", desc: "푸하하~ 웃기고 즐거워!", color: "#f0f4c3" },
-  { emoji: "😠", name: "속상함", desc: "기분이 안 좋고 마음이 아파", color: "#ffcdd2" },
-  { emoji: "🫣", name: "긴장됨", desc: "두근두근... 떨려!", color: "#e1bee7" },
-  { emoji: "😇", name: "뿌듯함", desc: "잘했다! 기분이 좋아~", color: "#c8e6c9" },
-  { emoji: "🤯", name: "당황함", desc: "어? 어? 뭐지?! 헷갈려!", color: "#ffe0b2" },
-  { emoji: "😏", name: "자랑스러움", desc: "나 정말 잘했지~? 으쓱!", color: "#fff9c4" },
-  { emoji: "🥱", name: "심심함", desc: "할 게 없어서 시무룩~", color: "#e0e0e0" },
-  { emoji: "😖", name: "후회됨", desc: "그때 그러지 말걸... 아쉬워", color: "#d1c4e9" },
-  { emoji: "🤝", name: "미안함", desc: "잘못한 것 같아서 마음이 무거워", color: "#b2dfdb" },
-  { emoji: "🫶", name: "행복함", desc: "세상에서 제일 좋은 기분이야!", color: "#f8bbd0" },
-  { emoji: "😶", name: "답답함", desc: "말하고 싶은데 잘 안 돼!", color: "#cfd8dc" },
-  { emoji: "✨", name: "설렘", desc: "곧 좋은 일이 일어날 것 같아~!", color: "#fff9c4" }
+  { emoji: "😊", name: "기쁨", desc: "마음이 환하고 웃음이 나와~", color: "#fff9c4",
+    art: "🌻🦋☀️", diary: "오늘 친구가 나한테 웃어줬어.\n그래서 나도 기쁜 마음이 활짝 피었어!" },
+  { emoji: "😢", name: "슬픔", desc: "눈물이 날 것 같은 마음이야", color: "#bbdefb",
+    art: "🌧️💧🐌", diary: "좋아하는 인형의 팔이 떨어졌어.\n너무 슬퍼서 눈물이 뚝뚝 흘렀어." },
+  { emoji: "😡", name: "화남", desc: "속이 부글부글 끓는 느낌이야", color: "#ffcdd2",
+    art: "🌋💢🔥", diary: "동생이 내 그림 위에 낙서했어.\n속에서 부글부글 화산이 터질 것 같았어!" },
+  { emoji: "😨", name: "무서움", desc: "오들오들 떨리고 겁이 나", color: "#d1c4e9",
+    art: "🌙👻🕷️", diary: "밤에 혼자 화장실에 갔어.\n그림자가 움직이는 것 같아서 무서웠어!" },
+  { emoji: "🥰", name: "사랑", desc: "마음이 따뜻하고 포근해~", color: "#f8bbd0",
+    art: "💕🧸🌷", diary: "엄마가 꼭 안아 주셨어.\n마음이 따뜻한 이불처럼 포근했어~" },
+  { emoji: "😮", name: "놀람", desc: "깜짝! 눈이 동그래졌어!", color: "#ffe0b2",
+    art: "🎁✨🎊", diary: "책상 위에 선물이 놓여 있었어!\n깜짝이야! 눈이 동그래졌어!" },
+  { emoji: "😌", name: "편안함", desc: "마음이 평화롭고 좋아~", color: "#c8e6c9",
+    art: "☁️🍃🌿", diary: "풀밭에 누워서 하늘을 봤어.\n바람이 살랑살랑 기분이 좋았어~" },
+  { emoji: "🤗", name: "고마움", desc: "감사한 마음이 가득해~", color: "#fff9c4",
+    art: "🎀💝🤲", diary: "친구가 지우개를 빌려줬어.\n고마운 마음이 마구마구 생겼어!" },
+  { emoji: "😔", name: "외로움", desc: "혼자인 것 같아 쓸쓸해", color: "#cfd8dc",
+    art: "🌙⭐🪟", diary: "친구들이 다 집에 가 버렸어.\n혼자 남으니까 마음이 쓸쓸했어." },
+  { emoji: "🤩", name: "신남", desc: "두근두근 가슴이 뛰어!", color: "#ffecb3",
+    art: "🎢🎠🎡", diary: "내일 놀이공원에 간다고 했어!\n너무 신나서 잠이 안 왔어!" },
+  { emoji: "😤", name: "짜증남", desc: "으으~ 기분이 나빠!", color: "#ffccbc",
+    art: "⚡😾💨", diary: "블록이 자꾸 무너져 버렸어.\n으으~ 짜증이 폭발할 것 같았어!" },
+  { emoji: "😳", name: "부끄러움", desc: "얼굴이 빨개지는 느낌이야", color: "#f8bbd0",
+    art: "🙈🌹💗", diary: "발표할 때 목소리가 떨렸어.\n얼굴이 토마토처럼 빨개졌어!" },
+  { emoji: "🥺", name: "서운함", desc: "마음이 좀 아프고 속상해", color: "#e1bee7",
+    art: "💔🥀😿", diary: "친구가 다른 친구랑만 놀았어.\n왜 나는 안 끼워 주는 걸까..." },
+  { emoji: "😤", name: "억울함", desc: "내 잘못이 아닌데 속상해!", color: "#ffcdd2",
+    art: "⚖️😾💧", diary: "내가 안 그랬는데 혼났어.\n너무 억울해서 눈물이 날 뻔했어!" },
+  { emoji: "🤔", name: "궁금함", desc: "이게 뭘까? 알고 싶어!", color: "#b3e5fc",
+    art: "🔍❓🧪", diary: "개미가 줄을 서서 걸어가고 있었어.\n어디로 가는 걸까? 너무 궁금해!" },
+  { emoji: "😴", name: "지루함", desc: "하품이 나오고 졸려~", color: "#d7ccc8",
+    art: "🐢💤🕐", diary: "수업 시간이 너무 길었어.\n하품이 끝없이 나왔어~" },
+  { emoji: "💪", name: "자신감", desc: "나는 할 수 있어! 힘이 나!", color: "#dcedc8",
+    art: "🏆🦁⭐", diary: "줄넘기를 드디어 열 번 했어!\n나는 할 수 있어! 최고야!" },
+  { emoji: "😟", name: "걱정됨", desc: "어떡하지... 마음이 불안해", color: "#b0bec5",
+    art: "🌀😿🌫️", diary: "내일 받아쓰기 시험이야.\n틀릴까 봐 걱정이 돼..." },
+  { emoji: "🥳", name: "즐거움", desc: "야호~! 정말 재미있어!", color: "#fff59d",
+    art: "🎉🎈🎶", diary: "친구들이랑 술래잡기를 했어.\n야호~! 너무너무 즐거웠어!" },
+  { emoji: "😣", name: "힘듦", desc: "너무 어렵고 지쳐~", color: "#d7ccc8",
+    art: "🏔️😮‍💨🐜", diary: "수학 문제가 너무 어려웠어.\n머리가 빙글빙글 돌았어~" },
+  { emoji: "🤭", name: "재미있음", desc: "푸하하~ 웃기고 즐거워!", color: "#f0f4c3",
+    art: "🤡🎪😹", diary: "친구가 웃긴 얼굴을 했어.\n배꼽이 빠질 만큼 웃었어!" },
+  { emoji: "😠", name: "속상함", desc: "기분이 안 좋고 마음이 아파", color: "#ffcdd2",
+    art: "🌧️💔🍂", diary: "열심히 만든 종이비행기가 찢어졌어.\n속상해서 한참 멍하니 있었어." },
+  { emoji: "🫣", name: "긴장됨", desc: "두근두근... 떨려!", color: "#e1bee7",
+    art: "🎤💓🫨", diary: "무대 위에 올라갔어.\n심장이 쿵쿵쿵 북처럼 울렸어!" },
+  { emoji: "😇", name: "뿌듯함", desc: "잘했다! 기분이 좋아~", color: "#c8e6c9",
+    art: "🌟📝👑", diary: "글씨를 예쁘게 써서 칭찬받았어.\n뿌듯해서 하늘을 날 것 같았어!" },
+  { emoji: "🤯", name: "당황함", desc: "어? 어? 뭐지?! 헷갈려!", color: "#ffe0b2",
+    art: "❓🌀😵", diary: "교실을 잘못 들어갔어.\n모르는 친구들이 쳐다봐서 당황했어!" },
+  { emoji: "😏", name: "자랑스러움", desc: "나 정말 잘했지~? 으쓱!", color: "#fff9c4",
+    art: "🥇🎖️💫", diary: "그림 그리기 대회에서 상 받았어.\n으쓱으쓱~ 나 좀 잘하지~?" },
+  { emoji: "🥱", name: "심심함", desc: "할 게 없어서 시무룩~", color: "#e0e0e0",
+    art: "🪑🕸️🐛", diary: "비가 와서 밖에 못 나갔어.\n할 게 하나도 없어서 시무룩~" },
+  { emoji: "😖", name: "후회됨", desc: "그때 그러지 말걸... 아쉬워", color: "#d1c4e9",
+    art: "⏰😿🔙", diary: "친구한테 심한 말을 해 버렸어.\n그때 그러지 말걸... 후회돼." },
+  { emoji: "🤝", name: "미안함", desc: "잘못한 것 같아서 마음이 무거워", color: "#b2dfdb",
+    art: "💌🕊️🙏", diary: "실수로 친구 필통을 떨어뜨렸어.\n미안해서 자꾸 마음이 무거웠어." },
+  { emoji: "🫶", name: "행복함", desc: "세상에서 제일 좋은 기분이야!", color: "#f8bbd0",
+    art: "🌈🦄🍰", diary: "가족이랑 케이크를 먹었어.\n세상에서 제일 행복한 날이었어!" },
+  { emoji: "😶", name: "답답함", desc: "말하고 싶은데 잘 안 돼!", color: "#cfd8dc",
+    art: "🧱🫧😶‍🌫️", diary: "하고 싶은 말이 있었는데 못 했어.\n가슴이 꽉 막힌 것 같았어." },
+  { emoji: "✨", name: "설렘", desc: "곧 좋은 일이 일어날 것 같아~!", color: "#fff9c4",
+    art: "🎁🌟🦋", diary: "내일 소풍 가는 날이야!\n두근두근 설레서 잠이 안 와~!" }
 ];
 
 // ===== 주제 만들기 =====
@@ -740,15 +958,8 @@ function openEmotions() {
       <span class="desc">${emo.desc}</span>
     `;
     card.addEventListener('click', () => {
-      card.classList.toggle('selected');
       playPop();
-      // 반짝이 효과
-      for (let j = 0; j < 5; j++) {
-        createSparkle(
-          card.getBoundingClientRect().left + card.offsetWidth / 2 + (Math.random() - 0.5) * 60,
-          card.getBoundingClientRect().top + card.offsetHeight / 2 + (Math.random() - 0.5) * 60
-        );
-      }
+      openCardDetail(emo);
     });
     grid.appendChild(card);
   });
@@ -773,6 +984,44 @@ function toggleEmotionHeader() {
     btn.textContent = '▼ 위 보이기';
   } else {
     btn.textContent = '▲ 위 숨기기';
+  }
+}
+
+// ===== 카드 상세 보기 =====
+function openCardDetail(emo) {
+  const overlay = document.getElementById('cardDetailOverlay');
+  const detail = document.getElementById('cardDetail');
+  const front = document.getElementById('cardFront');
+  const back = document.getElementById('cardBack');
+
+  // 앞면
+  front.style.backgroundColor = emo.color;
+  front.querySelector('.detail-emoji').textContent = emo.emoji;
+  front.querySelector('.detail-name').textContent = emo.name;
+  front.querySelector('.detail-desc').textContent = emo.desc;
+
+  // 뒷면
+  back.style.backgroundColor = emo.color;
+  back.querySelector('.back-art').textContent = emo.art;
+  back.querySelector('.back-diary').textContent = emo.diary;
+  back.querySelector('.back-emotion-tag').textContent = emo.emoji + ' ' + emo.name;
+
+  // 초기화 (앞면으로)
+  detail.classList.remove('flipped');
+  overlay.classList.add('active');
+}
+
+function flipCard(e) {
+  e.stopPropagation();
+  const detail = document.getElementById('cardDetail');
+  detail.classList.toggle('flipped');
+  playPop();
+}
+
+function closeCardDetail(e, forceClose) {
+  if (forceClose || e.target === document.getElementById('cardDetailOverlay')) {
+    document.getElementById('cardDetailOverlay').classList.remove('active');
+    document.getElementById('cardDetail').classList.remove('flipped');
   }
 }
 
