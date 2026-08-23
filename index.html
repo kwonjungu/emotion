@@ -379,7 +379,8 @@ body {
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.3s ease;
-  padding: 20px;
+  padding: 80px 20px 20px;
+  overflow-y: auto;
 }
 
 .card-detail-overlay.active {
@@ -690,12 +691,15 @@ const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 
 function getAudioCtx() {
+  if (!AudioCtx) return null;
   if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
 
 function playFanfare() {
   const ctx = getAudioCtx();
+  if (!ctx) return;
   const notes = [523.25, 659.25, 783.99, 1046.50];
   notes.forEach((freq, i) => {
     const osc = ctx.createOscillator();
@@ -713,6 +717,7 @@ function playFanfare() {
 
 function playPop() {
   const ctx = getAudioCtx();
+  if (!ctx) return;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = 'sine';
@@ -795,7 +800,7 @@ const topics = [
   { text: "투명 인간이 되면", tip: "아무도 나를 못 보면 뭘 하고 싶어~? 재미있는 상상을 해 보자!" },
   { text: "내가 슈퍼히어로라면", tip: "어떤 능력을 갖고 싶어~? 누구를 도와주고 싶어?" },
   { text: "우주에 가면", tip: "우주에 가면 뭐가 보일까~? 어떤 별에 가고 싶어?" },
-  { text: "마법 지팡이가 생기면", tip: "마법 지팡으로 딱 세 가지 소원을 빌 수 있다면 뭘 빌까~?" },
+  { text: "마법 지팡이가 생기면", tip: "마법 지팡이로 딱 세 가지 소원을 빌 수 있다면 뭘 빌까~?" },
   { text: "가장 재미있었던 놀이", tip: "어떤 놀이가 가장 재미있었어~? 누구랑 했는지도 써 보자!" },
   { text: "내가 가 본 곳 중 최고!", tip: "가장 좋았던 여행지나 장소는 어디야~? 거기서 뭘 했는지 써 보자!" },
   { text: "생일날의 이야기", tip: "생일에 뭘 했는지 떠올려 보자~! 어떤 선물을 받았어?" },
